@@ -11,24 +11,20 @@ const getAccessToken = () => {
 
 export const axiosClient = axios.create({
   baseURL: "https://jiranew.cybersoft.edu.vn/api",
+  headers: {
+    TokenCybersoft:
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0ZW5Mb3AiOiJGcm9udCBFbmQgNzEiLCJIZXRIYW5TdHJpbmciOiIxMS8xMi8yMDIyIiwiSGV0SGFuVGltZSI6IjE2NzA3MTY4MDAwMDAiLCJuYmYiOjE2NDU5ODEyMDAsImV4cCI6MTY3MDg2NDQwMH0.hImF3FD5ezlSpmo_fyOBeTlwLGcUfxyEeZIRIddaRFE",
+  },
 });
 
 // Add a request interceptor
-axiosClient.interceptors.request.use(
-  function (config) {
-    // Do something before request is sent
-    config.headers = {
-      TokenCybersoft:
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0ZW5Mb3AiOiJCb290Y2FtcCAyNCIsIkhldEhhblN0cmluZyI6IjI1LzExLzIwMjIiLCJIZXRIYW5UaW1lIjoiMTY2OTMzNDQwMDAwMCIsIm5iZiI6MTYzNzk0NjAwMCwiZXhwIjoxNjY5NDgyMDAwfQ.vwkhYBKLRzJB0Tm18qLCchebQxHvEsbsbUYBmlawj5s",
-      Authorization: getAccessToken(),
-    };
-    return config;
-  },
-  function (error) {
-    // Do something with request error
-    return Promise.reject(error);
+axiosClient.interceptors.request.use((config) => {
+  const token = getAccessToken();
+  if (token) {
+    config.headers.Authorization = getAccessToken();
   }
-);
+  return config;
+});
 
 // Add a response interceptor
 axiosClient.interceptors.response.use(

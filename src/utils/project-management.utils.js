@@ -1,47 +1,49 @@
-import { Avatar } from "antd";
+import { NavLink } from "react-router-dom";
+import { MemberComponent } from "../components/members/members.component";
 
+let data = {
+  id: 0,
+  members: [],
+};
 export const projectThreadColumn = [
   {
     title: "Project ID",
-    dataIndex: "categoryId",
-    key: "categoryId",
-    render: (text) => <p>{text}</p>,
+    dataIndex: "id",
+    key: "id",
+    render: (text) => {
+      data = { ...data, id: text };
+      return <span>{text}</span>;
+    },
   },
   {
     title: "Project Name",
     dataIndex: "projectName",
     key: "projectName",
-    render: (text) => <p>{text}</p>,
+    render: (text) => (
+      <NavLink to={`/project/project-detail/${data.id}`}>{text}</NavLink>
+    ),
+  },
+  {
+    title: "Creator",
+    dataIndex: "creator",
+    key: "creator",
+    render: (creator) => {
+      return <span>{creator.name}</span>;
+    },
   },
   {
     title: "Category",
     dataIndex: "categoryName",
     key: "categoryName",
-    render: (text) => <p>{text}</p>,
+    render: (text) => <span>{text}</span>,
   },
   {
     title: "Members",
     dataIndex: "members",
     key: "members",
     render: (members) => {
-      if (members && members.length > 0) {
-        return members.map((member) => {
-          return (
-            <Avatar
-              style={{
-                backgroundColor: "#7265e6",
-                verticalAlign: "middle",
-                margin: "2px",
-              }}
-              size="large"
-              gap={1}
-            >
-              {formatName(member.name)}
-            </Avatar>
-          );
-        });
-      }
-      return "";
+      data = { ...data, members: [...members] };
+      return <MemberComponent projectDetail={data} />;
     },
   },
   {
@@ -51,13 +53,17 @@ export const projectThreadColumn = [
   },
 ];
 
-const formatName = (name) => {
+export const formatName = (name) => {
   let formattedName = "";
   for (var i = 0; i < name.length; i++) {
     if (i === 0) {
       formattedName += name[i].toUpperCase();
     }
-    if (name[i] === " " && name[i + 1].match(/[a-z]/i)) {
+    if (
+      name[i] === " " &&
+      name[i + 1] !== undefined &&
+      name[i + 1].match(/[a-z]/i)
+    ) {
       formattedName += name[i + 1].toUpperCase();
     }
   }

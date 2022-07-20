@@ -1,10 +1,6 @@
 import React from "react";
 
 import {
-  BarChartOutlined,
-  InsertRowBelowOutlined,
-  CodeOutlined,
-  GatewayOutlined,
   FileAddOutlined,
   PlusSquareOutlined,
   SettingOutlined,
@@ -13,29 +9,21 @@ import { NavLink } from "react-router-dom";
 
 export const navbarItems = [
   {
-    key: "planning",
-    label: "Planning",
-    children: [
-      { label: "Roadmap", icon: BarChartOutlined },
-      { key: "board", label: "Board", icon: InsertRowBelowOutlined },
-    ],
-  },
-  {
-    key: "development",
-    label: "Development",
-    children: [
-      { label: "Code", icon: CodeOutlined },
-      { label: "Releases", icon: GatewayOutlined },
-    ],
-  },
-  {
     key: "project-management",
-    label: <NavLink to="/project">Project Management</NavLink>,
+    label: (
+      <NavLink to="/project" className="text-white">
+        Project Management
+      </NavLink>
+    ),
     icon: FileAddOutlined,
   },
   {
     key: "create-project",
-    label: <NavLink to="/create-project">Create Project</NavLink>,
+    label: (
+      <NavLink to="/create-project" className="text-white">
+        Create Project
+      </NavLink>
+    ),
     icon: PlusSquareOutlined,
   },
   {

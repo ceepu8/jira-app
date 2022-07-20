@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { useNavigate } from "react-router";
+import { Outlet, useNavigate } from "react-router";
 import { userLocalService } from "../../local-services/local-service";
 
 import "./main-template.style.css";
@@ -7,6 +7,7 @@ import "./main-template.style.css";
 import { Layout } from "antd";
 import { NavBar } from "../../components/navbar/nav-bar.component";
 import { HeaderComponent } from "../../components/header/header.component";
+import { ToastContainer } from "react-toastify";
 const { Header, Content } = Layout;
 
 export const MainTemplate = (props) => {
@@ -24,18 +25,13 @@ export const MainTemplate = (props) => {
   }, []);
   return (
     <div>
-      <Layout className="h-screen">
-        {/* Header */}
-        <Header className="header p-0">
-          <HeaderComponent />
-        </Header>
+      <ToastContainer autoClose="2000" />
+      <Layout className="min-h-screen">
         <Layout>
-          {/* Navbar */}
           <NavBar />
-          {/* Content */}
-          <Layout className="p-[10px]">
-            <Content className="site-layout-background">
-              <Element />
+          <Layout>
+            <Content className="site-layout-background p-[30px]">
+              <Outlet />
             </Content>
           </Layout>
         </Layout>
