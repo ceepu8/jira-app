@@ -1,35 +1,73 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
 
 import {
   createProject,
   getDetailProject,
   updateProject,
-} from "../../apis/project.management.apis";
+} from "apis/project.management.apis";
 
 import { Editor } from "@tinymce/tinymce-react";
 
 import { Form, Input, Button, Select } from "antd";
+
 import { toast } from "react-toastify";
-import { useDispatch, useSelector } from "react-redux";
+import { closeProjectEditForm } from "redux/slices/toggleSlice";
+import { fetchProjectList } from "redux/slices/projectSlice";
 const { Option } = Select;
 
-export const CreateProjectForm = ({ projectDetailId, isModal }) => {
+export const CreateProjectForm = ({ projectDetailId }) => {
+  const { isProjectFormEditToggle } = useSelector((state) => state.toggleSlice);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [currentProject, setCurrentProject] = useState({
     projectName: "",
     description: "",
     categoryId: 1,
   });
 
-  const handleFinish = async () => {
-    if (projectDetailId) {
+  const createProjectWithAPI = async () => {
+    try {
+      const data = await createProject(currentProject);
+      if (data.statusCode === 200) {
+        toast.success("Create project successfully!!");
+        setTimeout(() => {
+          navigate("/project");
+        }, 2000);
+      }
+    } catch (error) {
+      const {
+        response: { data },
+      } = error;
+      if (data.statusCode === 500) {
+        toast.error(data.content);
+      }
+    }
+  };
+
+  const updateProjectWithAPI = async () => {
+    try {
       const data = await updateProject({
         ...currentProject,
         id: projectDetailId,
       });
-      console.log(data);
+      if (data.statusCode === 200) {
+        toast.success("Update project successfully!!");
+        dispatch(closeProjectEditForm());
+        dispatch(fetchProjectList());
+      }
+      dispatch();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleFinish = async () => {
+    if (projectDetailId) {
+      await updateProjectWithAPI();
     } else {
-      const data = await createProject(currentProject);
-      console.log(data);
+      await createProjectWithAPI();
     }
   };
 
@@ -52,12 +90,16 @@ export const CreateProjectForm = ({ projectDetailId, isModal }) => {
   }, [projectDetailId]);
 
   return (
-    <div className={`${isModal ? "w-[100%]" : "w-[50%]"}  mx-auto mt-5`}>
+    <div
+      className={`${
+        isProjectFormEditToggle ? "w-[100%]" : "w-[50%]"
+      }  mx-auto mt-5`}
+    >
       <p className="text-[24px] font-medium">
-        {isModal ? "Project Edit" : "Project Details"}
+        {isProjectFormEditToggle ? "Project Edit" : "Project Details"}
       </p>
       <Form layout="vertical" onFinish={handleFinish}>
-        {isModal ? (
+        {isProjectFormEditToggle ? (
           <Form.Item label="ProjectID">
             <Input
               id="projectId"

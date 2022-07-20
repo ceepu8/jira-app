@@ -1,4 +1,4 @@
-import React from "react";
+import { useLocation } from "react-router-dom";
 
 import { Layout, Menu } from "antd";
 import { navbarItems } from "./nav-bar.settings";
@@ -6,12 +6,15 @@ import { navbarItems } from "./nav-bar.settings";
 const { Sider } = Layout;
 
 export const NavBar = () => {
+  let { pathname } = useLocation();
+
   return (
-    <Sider width={200} className="site-layout-background">
-      <div
-        className="flex items-center py-[20px] justify-center"
-        style={{ backgroundColor: "#0151b3" }}
-      >
+    <Sider
+      width={200}
+      className="site-layout-background"
+      style={{ backgroundColor: "#0151b3" }}
+    >
+      <div className="flex items-center py-[20px] justify-center">
         <img
           className="w-[50px] h-full object-contain mr-1"
           src="/images/check-list.png"
@@ -22,12 +25,13 @@ export const NavBar = () => {
       <Menu
         theme="dark"
         mode="inline"
-        defaultSelectedKeys={["0"]}
+        defaultSelectedKeys={
+          pathname === "/project" || pathname === "/" ? ["0"] : ["1"]
+        }
         style={{
-          height: "100%",
           borderRight: 0,
-          backgroundColor: "#0050b3",
           color: "white",
+          backgroundColor: "#0151b3",
         }}
         items={navbarItems}
       />

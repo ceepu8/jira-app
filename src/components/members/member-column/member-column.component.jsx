@@ -9,7 +9,6 @@ import { renderAvatar } from "../../../utils/avatar-render.utils";
 
 export const MemberColumnComponent = ({ projectDetail }) => {
   const { members } = projectDetail;
-  console.log(projectDetail);
 
   const content = (
     <div className="w-[300px]">

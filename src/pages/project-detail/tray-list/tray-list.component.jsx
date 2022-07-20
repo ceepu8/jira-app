@@ -55,7 +55,7 @@ export const TrayListComponent = ({ projectDetail }) => {
               <Card
                 ref={provided.innerRef}
                 {...provided.droppableProps}
-                title={each.statusName}
+                // title={each.statusName}
                 style={{
                   backgroundColor: "#f2f5f7",
                   border: "none",

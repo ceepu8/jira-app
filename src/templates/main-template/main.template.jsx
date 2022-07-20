@@ -26,8 +26,8 @@ export const MainTemplate = (props) => {
   return (
     <div>
       <ToastContainer autoClose="2000" />
-      <Layout className="min-h-screen">
-        <Layout>
+      <Layout>
+        <Layout className="min-h-screen">
           <NavBar />
           <Layout>
             <Content className="site-layout-background p-[30px]">

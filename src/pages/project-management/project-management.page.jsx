@@ -1,6 +1,5 @@
 import React from "react";
-import { useSelector } from "react-redux";
-import { SpinnerComponent } from "../../components/spinner/spinner.component";
+
 import { ProjectListTableComponent } from "./project-list-table/project-list-table.component";
 
 export const ProjectManagementPage = () => {

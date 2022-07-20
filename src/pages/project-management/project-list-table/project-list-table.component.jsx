@@ -4,20 +4,24 @@ import { useDispatch, useSelector } from "react-redux";
 import { Table, Button, Popconfirm } from "antd";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 
-import { projectThreadColumn } from "../../../utils/project-management.utils";
-import { deleteProject } from "../../../apis/project.management.apis";
+import { projectThreadColumn } from "utils/project-management.utils";
+import { deleteProject } from "apis/project.management.apis";
 
 import { toast } from "react-toastify";
 
 import { EditModalComponent } from "../edit-modal.component/edit-modal.component";
 
-import { CreateProjectForm } from "../../../forms/create-project-form/create-project-form";
-import { fetchProjectList } from "../../../redux/slices/projectSlice";
-import { SpinnerComponent } from "../../../components/spinner/spinner.component";
+import { CreateProjectForm } from "forms/create-project-form/create-project-form";
+import { fetchProjectList } from "redux/slices/projectSlice";
+import { SpinnerComponent } from "components/spinner/spinner.component";
+import {
+  closeProjectEditForm,
+  openProjectEditForm,
+} from "redux/slices/toggleSlice";
 
 export const ProjectListTableComponent = () => {
-  const [isVisible, setVisible] = useState(false);
   const [projectDetailId, setProjectDetailId] = useState(0);
+  const { isProjectFormEditToggle } = useSelector((state) => state.toggleSlice);
 
   const { projectList, isLoading } = useSelector((state) => state.projectSlice);
 
@@ -29,7 +33,7 @@ export const ProjectListTableComponent = () => {
 
   const showEditModal = (projectId) => {
     setProjectDetailId(projectId);
-    setVisible(true);
+    dispatch(openProjectEditForm());
   };
 
   const handleDeleteProject = async (projectId) => {
@@ -78,20 +82,16 @@ export const ProjectListTableComponent = () => {
     });
   };
 
-  const handleCancel = () => {
-    setVisible(false);
-  };
-
   return (
     <>
       <Table
         className="p-[10px]"
         columns={projectThreadColumn}
-        dataSource={renderDataTable(projectList)}
+        dataSource={projectList && renderDataTable(projectList)}
       />
       <EditModalComponent
-        isVisible={isVisible}
-        handleCancel={handleCancel}
+        isVisible={isProjectFormEditToggle}
+        handleCancel={() => dispatch(closeProjectEditForm())}
         Element={CreateProjectForm}
         projectDetailId={projectDetailId}
       />

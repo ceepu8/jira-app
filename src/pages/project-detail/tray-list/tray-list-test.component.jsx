@@ -77,12 +77,22 @@ export const TrayListComponentTest = ({ projectDetail }) => {
 
       return (
         <Col span={6} key={each.statusId}>
+          <h1
+            style={{
+              backgroundColor: "#165fc7",
+              padding: "10px",
+              borderRadius: "10px 10px 0 0",
+              color: "#ffffff",
+            }}
+          >
+            {each.statusName}
+          </h1>
           <Droppable droppableId={each.statusId}>
             {(provided, snapshot) => (
               <Card
                 ref={provided.innerRef}
                 {...provided.droppableProps}
-                title={each.statusName}
+                // title={each.statusName}
                 style={{
                   backgroundColor: "#f2f5f7",
                   border: "none",
