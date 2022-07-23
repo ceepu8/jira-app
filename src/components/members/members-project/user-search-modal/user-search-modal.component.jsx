@@ -6,14 +6,14 @@ import { AutoComplete, Button } from "antd";
 
 import { useDispatch } from "react-redux";
 
-import { getUser } from "../../../apis/user.management.apis";
-import { addMemberProject } from "../../../apis/project.management.apis";
+import { getUser } from "../../../../apis/user.management.apis";
+import { addMemberProject } from "../../../../apis/project.management.apis";
 
 import { toast } from "react-toastify";
 import {
   fetchProjectDetail,
   fetchProjectList,
-} from "../../../redux/slices/projectSlice";
+} from "../../../../redux/slices/projectSlice";
 import { useLocation } from "react-router";
 
 const { Option } = AutoComplete;

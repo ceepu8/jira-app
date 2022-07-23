@@ -4,7 +4,7 @@ import { userLocalService } from "local-services/local-service";
 import { getAllCommentAPI } from "redux/slices/commentSlice";
 import { insertComment } from "apis/comment.management.apis";
 
-import { Avatar, Button } from "antd";
+import { Avatar, Button, Col, Row } from "antd";
 
 import { useDispatch, useSelector } from "react-redux";
 
@@ -43,17 +43,23 @@ export const CommentEditorComponent = () => {
   return (
     <div className="mb-5">
       <p className="font-semibold">Comments</p>
-      <div className="flex justify-around">
-        <Avatar size="large" src={user.avatar} />
-        <Editor
-          onEditorChange={onChange}
-          value={comment.contentComment}
-          init={{
-            height: 150,
-            menubar: false,
-          }}
-        />
-      </div>
+      <Row>
+        <Col span={2}>
+          <div className="text-center">
+            <Avatar size="large" src={user.avatar} />
+          </div>{" "}
+        </Col>
+        <Col span={22}>
+          <Editor
+            onEditorChange={onChange}
+            value={comment.contentComment}
+            init={{
+              height: 150,
+              menubar: false,
+            }}
+          />
+        </Col>
+      </Row>
       {comment.contentComment ? (
         <div className="w-[100%] text-right mt-6">
           <Button className="mr-2" type="primary" onClick={handleSubmit}>

@@ -14,15 +14,33 @@ export const renderAvatar = (dataList) => {
     "#52c41a",
   ];
 
-  return dataList.map((each, index) => {
-    return (
-      <Avatar
-        key={each.userId}
-        size="large"
-        style={{ backgroundColor: colorList[index], marginRight: "3px" }}
-      >
-        {formatName(each.name)}
-      </Avatar>
-    );
-  });
+  return (
+    <Avatar.Group>
+      {dataList.map((each, index) => {
+        if (index < 4) {
+          return (
+            <Avatar
+              key={each.userId}
+              size="large"
+              style={{ backgroundColor: colorList[index] }}
+            >
+              {formatName(each.name)}
+            </Avatar>
+          );
+        } else if (index === 4) {
+          return (
+            <Avatar
+              key={each.userId}
+              size="large"
+              style={{ backgroundColor: colorList[index] }}
+            >
+              +{dataList.length - 4}
+            </Avatar>
+          );
+        } else {
+          return;
+        }
+      })}
+    </Avatar.Group>
+  );
 };

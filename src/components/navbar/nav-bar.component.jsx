@@ -11,8 +11,14 @@ export const NavBar = () => {
   return (
     <Sider
       width={200}
-      className="site-layout-background"
-      style={{ backgroundColor: "#0151b3" }}
+      breakpoint="lg"
+      collapsedWidth="0"
+      onBreakpoint={(broken) => {
+        console.log(broken);
+      }}
+      onCollapse={(collapsed, type) => {
+        console.log(collapsed, type);
+      }}
     >
       <div className="flex items-center py-[20px] justify-center">
         <img
@@ -31,7 +37,6 @@ export const NavBar = () => {
         style={{
           borderRight: 0,
           color: "white",
-          backgroundColor: "#0151b3",
         }}
         items={navbarItems}
       />

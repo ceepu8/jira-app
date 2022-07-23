@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 
+import styles from "./style.module.css";
+
 import {
   createProject,
   getDetailProject,
@@ -92,7 +94,7 @@ export const CreateProjectForm = ({ projectDetailId }) => {
   return (
     <div
       className={`${
-        isProjectFormEditToggle ? "w-[100%]" : "w-[50%]"
+        isProjectFormEditToggle ? "w-[100%]" : styles.formWidth
       }  mx-auto mt-5`}
     >
       <p className="text-[24px] font-medium">

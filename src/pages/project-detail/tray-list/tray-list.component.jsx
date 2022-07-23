@@ -49,7 +49,11 @@ export const TrayListComponent = ({ projectDetail }) => {
       }
 
       return (
-        <Col span={6} key={each.statusId}>
+        <Col
+          md={{ span: 12, offset: 1 }}
+          lg={{ span: 6, offset: 1 }}
+          key={each.statusId}
+        >
           <Droppable droppableId="droppable">
             {(provided, snapshot) => (
               <Card

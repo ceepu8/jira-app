@@ -7,14 +7,31 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import { Button, Popconfirm, Skeleton, Table } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
 
-import { removeMemberProject } from "../../../apis/project.management.apis";
+import { removeMemberProject } from "../../../../apis/project.management.apis";
 
-import { memberColumns } from "./member-modal.settings";
 import {
   fetchProjectDetail,
   fetchProjectList,
-} from "../../../redux/slices/projectSlice";
+} from "../../../../redux/slices/projectSlice";
 import { useLocation } from "react-router";
+
+export const memberColumns = [
+  {
+    title: "ID",
+    dataIndex: "userId",
+    key: "userId",
+  },
+  {
+    title: "Name",
+    dataIndex: "name",
+    key: "name",
+  },
+  {
+    title: "Action",
+    dataIndex: "action",
+    key: "action",
+  },
+];
 
 export const MemberModalComponent = ({ projectDetail }) => {
   const { members, id } = projectDetail;

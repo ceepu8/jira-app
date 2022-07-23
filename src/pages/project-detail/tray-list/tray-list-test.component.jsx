@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 
-import "./tray-list.styles.css";
+import styles from "./styles.module.css";
 
 import { Card, Col, Row } from "antd";
+import { DeleteOutlined } from "@ant-design/icons";
 
 import { getStatus } from "../../../apis/status.management.api";
 
@@ -10,7 +11,9 @@ import { TrayItemComponent } from "../tray-item/tray-item.component";
 
 import { Draggable, Droppable, DragDropContext } from "react-beautiful-dnd";
 import { TaskCardComponent } from "../task-card/task-card.component";
-import { updateTaskStatus } from "../../../apis/task.management.apis";
+
+import { deleteTask, updateTaskStatus } from "apis/task.management.apis";
+
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import {
@@ -18,10 +21,12 @@ import {
   setProjectDetail,
 } from "../../../redux/slices/projectSlice";
 import { getDetailProject } from "../../../apis/project.management.apis";
+import { toast } from "react-toastify";
 
 export const TrayListComponentTest = ({ projectDetail }) => {
   const dispatch = useDispatch();
   const [status, setStatus] = useState([]);
+  const [toggleTrash, setIsToggleTrash] = useState(false);
 
   const fetchStatus = async () => {
     try {
@@ -44,25 +49,37 @@ export const TrayListComponentTest = ({ projectDetail }) => {
       console.log(error);
     }
   };
+
   const onDragEnd = async (result) => {
     const {
       destination: { droppableId },
       draggableId,
     } = result;
-
-    const data = {
-      taskId: draggableId,
-      statusId: Number(droppableId),
-    };
-    try {
-      const { statusCode } = await updateTaskStatus(data);
-      if (statusCode === 200) {
-        console.log(projectDetail);
-        dispatch(fetchProjectDetail(projectDetail.id));
+    if (droppableId === "deleteTask") {
+      try {
+        const response = await deleteTask(draggableId);
+        if (response.statusCode === 200) {
+          toast.success("Delete task successfully");
+          dispatch(fetchProjectDetail(projectDetail.id));
+        }
+      } catch (error) {
+        console.log(error);
       }
-    } catch (error) {
-      console.log(error);
+    } else {
+      const data = {
+        taskId: draggableId,
+        statusId: Number(droppableId),
+      };
+      try {
+        const { statusCode } = await updateTaskStatus(data);
+        if (statusCode === 200) {
+          dispatch(fetchProjectDetail(projectDetail.id));
+        }
+      } catch (error) {
+        console.log(error);
+      }
     }
+    setIsToggleTrash(false);
   };
   const renderStatusTrack = () => {
     return status.map((each) => {
@@ -76,7 +93,13 @@ export const TrayListComponentTest = ({ projectDetail }) => {
       }
 
       return (
-        <Col span={6} key={each.statusId}>
+        <Col
+          sm={{ span: 24 }}
+          md={{ span: 12 }}
+          lg={{ span: 12 }}
+          xl={{ span: 6 }}
+          key={each.statusId}
+        >
           <h1
             style={{
               backgroundColor: "#165fc7",
@@ -96,7 +119,8 @@ export const TrayListComponentTest = ({ projectDetail }) => {
                 style={{
                   backgroundColor: "#f2f5f7",
                   border: "none",
-                  minHeight: "500px",
+                  minHeight: "550px",
+                  paddingBottom: "20px",
                 }}
               >
                 {taskList.map((task, index) => {
@@ -129,11 +153,30 @@ export const TrayListComponentTest = ({ projectDetail }) => {
 
   return (
     <div className="site-card-wrapper">
-      <Row gutter={8}>
-        <DragDropContext onDragEnd={onDragEnd}>
-          {renderStatusTrack()}
-        </DragDropContext>
-      </Row>
+      <DragDropContext
+        onDragEnd={onDragEnd}
+        onBeforeDragStart={() => setIsToggleTrash(true)}
+      >
+        <Row gutter={8}>{renderStatusTrack()}</Row>
+
+        <Droppable droppableId="deleteTask">
+          {(provided, snapshot) => {
+            return (
+              <div
+                className={`${styles.positionTrash}`}
+                ref={provided.innerRef}
+                {...provided.droppableProps}
+              >
+                {toggleTrash ? (
+                  <DeleteOutlined className={`${styles.trashIcon}`} />
+                ) : (
+                  ""
+                )}
+              </div>
+            );
+          }}
+        </Droppable>
+      </DragDropContext>
     </div>
   );
 };

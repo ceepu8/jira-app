@@ -27,13 +27,19 @@ export const MainTemplate = (props) => {
     <div>
       <ToastContainer autoClose="2000" />
       <Layout>
-        <Layout className="min-h-screen">
-          <NavBar />
-          <Layout>
-            <Content className="site-layout-background p-[30px]">
-              <Outlet />
-            </Content>
-          </Layout>
+        <NavBar />
+        <Layout className="site-layout min-h-screen">
+          <Content
+            className="site-layout-background pt-[30px]"
+            style={{ margin: "24px 16px 0", overflow: "initial" }}
+          >
+            <div
+              className="site-layout-background min-h-full  "
+              style={{ padding: 24, textAlign: "center" }}
+            >
+              <Outlet className="min-h-full" />
+            </div>
+          </Content>
         </Layout>
       </Layout>
     </div>

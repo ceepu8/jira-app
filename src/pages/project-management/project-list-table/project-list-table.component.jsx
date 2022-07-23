@@ -84,6 +84,9 @@ export const ProjectListTableComponent = () => {
 
   return (
     <>
+      <span className="text-[24px] font-medium px-[20px]">
+        Project Management
+      </span>
       <Table
         className="p-[10px]"
         columns={projectThreadColumn}

@@ -1,0 +1,23 @@
+.overflowText {
+  text-align: left;
+}
+
+@media screen and (min-width: 1200px) and (max-width: 1500px) {
+  .overflowText {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+}
+
+@media screen and (min-width: 600px) and (max-width: 900px) {
+  .overflowText {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+}

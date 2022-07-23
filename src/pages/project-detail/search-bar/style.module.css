@@ -1,0 +1,16 @@
+.sectionCreateTask {
+  text-align: right;
+}
+
+.buttonCreateTask {
+  padding: 10px;
+  background-color: #165fc7;
+  color: #ffffff;
+  border-radius: 5px;
+}
+
+@media screen and (max-width: 1200px) {
+  .sectionCreateTask {
+    text-align: left;
+  }
+}

@@ -8,11 +8,11 @@ export const TaskDetailPage = () => {
   return (
     <div>
       <Row gutter={16}>
-        <Col span={15}>
+        <Col md={{ span: 16 }} span={15}>
           <TaskLeftInforComponent />
           <CommentComponent />
         </Col>
-        <Col span={9}>
+        <Col md={{ span: 8 }} span={9}>
           <TaskRightInfoComponent />
         </Col>
       </Row>

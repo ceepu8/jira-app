@@ -6,6 +6,9 @@ import { ClockCircleOutlined } from "@ant-design/icons";
 import { renderPriority } from "../../../forms/create-task-form/priority.settings";
 import { renderAvatar } from "../../../utils/avatar-render.utils";
 import { useSelector } from "react-redux";
+import { MemberComponent } from "components/members/members-project/members.component";
+import { AddMemberTaskComponent } from "components/members/members-task/add-member/add-member-task.component";
+import { MemberTaskComponent } from "components/members/members-task/members-task.component";
 
 const { Option } = Select;
 
@@ -23,7 +26,9 @@ export const TaskRightInfoComponent = () => {
       </div>
       <div className="assignees mt-3">
         <p className="font-semibold text-xs text-gray-500">ASSIGNEES</p>
-        {renderAvatar(taskDetail.assigness)}
+        <div class="flex">
+          <MemberTaskComponent />
+        </div>
       </div>
       <div className="priority mt-3">
         <p className="font-semibold text-xs text-gray-500">PRIORITY</p>

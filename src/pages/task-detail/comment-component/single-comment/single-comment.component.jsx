@@ -66,16 +66,17 @@ export const SingleCommentComponent = ({ comment }) => {
 
   return (
     <Row className="mb-5">
-      <Col span={2}>
-        <Avatar src={comment.user.avatar} size="large" />
+      <Col md={{ span: 3 }} lg={{ span: 2 }}>
+        <div className="text-center">
+          <Avatar src={comment.user.avatar} size="large" />
+        </div>
       </Col>
-      <Col span={22}>
+      <Col md={{ span: 21 }} lg={{ span: 22 }}>
         <span className="text-blue-900 font-semibold mr-2">
           {comment.user.name}
         </span>
         {user.id === comment.userId ? (
           <>
-            {" "}
             <Tag color="green">My comment</Tag>
           </>
         ) : (

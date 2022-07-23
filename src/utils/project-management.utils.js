@@ -1,5 +1,6 @@
+import { MemberProjectComponent } from "components/members/members-project/members.component";
 import { NavLink } from "react-router-dom";
-import { MemberComponent } from "../components/members/members.component";
+import { MemberComponent } from "../components/members/members-project/members.component";
 
 let data = {
   id: 0,
@@ -43,7 +44,7 @@ export const projectThreadColumn = [
     key: "members",
     render: (members) => {
       data = { ...data, members: [...members] };
-      return <MemberComponent projectDetail={data} />;
+      return <MemberProjectComponent projectDetail={data} />;
     },
   },
   {

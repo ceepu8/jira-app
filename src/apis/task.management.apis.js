@@ -11,3 +11,11 @@ export const getTaskDetail = (taskId) => {
 export const updateTaskStatus = (data) => {
   return axiosClient.put(`/Project/updateStatus`, data);
 };
+
+export const assignUserTask = (data) => {
+  return axiosClient.post("/Project/assignUserTask", data);
+};
+
+export const deleteTask = (taskId) => {
+  return axiosClient.delete(`/Project/removeTask?taskId=${taskId}`);
+};

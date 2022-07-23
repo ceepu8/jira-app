@@ -1,0 +1,9 @@
+.formWidth {
+  width: 60%;
+}
+
+@media screen and (max-width: 1300px) {
+  .formWidth {
+    width: 70%;
+  }
+}

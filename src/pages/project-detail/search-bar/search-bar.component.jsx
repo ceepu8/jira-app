@@ -1,14 +1,14 @@
-import React, { useState } from "react";
+import { useState } from "react";
 
-import { Avatar, Button, Input, Modal } from "antd";
+import styles from "./style.module.css";
+
+import { Avatar, Button, Col, Input, Modal, Row } from "antd";
 
 import { BsSearch } from "react-icons/bs";
 
-import { AddMemberAvatarComponent } from "../../../components/members/add-member-avatar/add-member-avatar.component";
 import { CreateTaskForm } from "../../../forms/create-task-form/create-task.form";
-import { renderAvatar } from "../../../utils/avatar-render.utils";
 import { useSelector } from "react-redux";
-import { MemberComponent } from "../../../components/members/members.component";
+import { MemberProjectComponent } from "components/members/members-project/members.component";
 
 export const SearchBarComponent = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -23,33 +23,60 @@ export const SearchBarComponent = () => {
     setIsModalVisible(false);
   };
   return (
-    <div className="search-bar flex justify-between text-center pb-5">
-      <div className="flex">
-        <div className="flex mr-5">
-          <Input style={{ borderRadius: "0px", width: "250px" }} />
-          <button
-            style={{ borderRadius: "0px 5px 5px 0" }}
-            className="bg-blue-400 text-white"
-          >
-            <BsSearch style={{ padding: "5px", fontSize: "30px" }} />
-          </button>
-        </div>
-        <div className="member-section ">
-          <MemberComponent projectDetail={{ id: id, members: members }} />
-        </div>
-      </div>
-
-      <Button className="bg-blue-500 text-white" onClick={showModal}>
-        Create Task
-      </Button>
-      <Modal
-        title="Create Task"
-        className="w-[700px]"
-        visible={isModalVisible}
-        onCancel={handleCancel}
-      >
-        <CreateTaskForm />
-      </Modal>
+    <div className="my-[25px]">
+      <Row>
+        <Col
+          sm={{ span: 12 }}
+          md={{ span: 8 }}
+          xl={{ span: 6 }}
+          xxl={{ span: 5 }}
+        >
+          <div className="flex">
+            <Input style={{ borderRadius: "0px", width: "250px" }} />
+            <button
+              style={{ borderRadius: "0px 5px 5px 0" }}
+              className="bg-blue-400 text-white"
+            >
+              <BsSearch style={{ padding: "5px", fontSize: "30px" }} />
+            </button>
+          </div>
+        </Col>
+        <Col
+          sm={{ span: 12 }}
+          md={{ span: 8 }}
+          xl={{ span: 6 }}
+          xxl={{ span: 4 }}
+        >
+          <div className="member-section">
+            <MemberProjectComponent
+              projectDetail={{ id: id, members: members }}
+            />
+          </div>
+        </Col>
+        <Col
+          sm={{ span: 12 }}
+          md={{ span: 12 }}
+          xl={{ span: 12 }}
+          xxl={{ span: 15 }}
+        >
+          <div className={`${styles.sectionCreateTask}`}>
+            <button
+              className={`${styles.buttonCreateTask}`}
+              onClick={showModal}
+            >
+              Create Task
+            </button>
+            <Modal
+              title="Create Task"
+              className="w-[700px]"
+              visible={isModalVisible}
+              onCancel={handleCancel}
+            >
+              <CreateTaskForm />
+            </Modal>
+          </div>
+        </Col>
+      </Row>
     </div>
   );
 };
