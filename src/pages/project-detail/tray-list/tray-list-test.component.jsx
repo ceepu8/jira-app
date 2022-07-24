@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from "react";
 
 import styles from "./styles.module.css";
+import "./tray-list.styles.css";
 
 import { Card, Col, Row } from "antd";
-import { DeleteOutlined } from "@ant-design/icons";
+import { DeleteOutlined, WarningOutlined } from "@ant-design/icons";
+
+import { CSSTransition } from "react-transition-group";
 
 import { getStatus } from "../../../apis/status.management.api";
 
@@ -27,6 +30,7 @@ export const TrayListComponentTest = ({ projectDetail }) => {
   const dispatch = useDispatch();
   const [status, setStatus] = useState([]);
   const [toggleTrash, setIsToggleTrash] = useState(false);
+  const [toggleMessage, setToggleMessage] = useState(false);
 
   const fetchStatus = async () => {
     try {
@@ -55,10 +59,11 @@ export const TrayListComponentTest = ({ projectDetail }) => {
       destination: { droppableId },
       draggableId,
     } = result;
-    if (droppableId === "deleteTask") {
+    if (droppableId === "deleteTask" && toggleMessage) {
       try {
         const response = await deleteTask(draggableId);
         if (response.statusCode === 200) {
+          setToggleMessage(false);
           toast.success("Delete task successfully");
           dispatch(fetchProjectDetail(projectDetail.id));
         }
@@ -162,17 +167,39 @@ export const TrayListComponentTest = ({ projectDetail }) => {
         <Droppable droppableId="deleteTask">
           {(provided, snapshot) => {
             return (
-              <div
-                className={`${styles.positionTrash}`}
-                ref={provided.innerRef}
-                {...provided.droppableProps}
-              >
-                {toggleTrash ? (
-                  <DeleteOutlined className={`${styles.trashIcon}`} />
-                ) : (
-                  ""
-                )}
-              </div>
+              <>
+                <div
+                  className={`${styles.positionTrash}`}
+                  ref={provided.innerRef}
+                  {...provided.droppableProps}
+                  onMouseOver={() => {
+                    setToggleMessage(true);
+                  }}
+                  onMouseLeave={() => {
+                    setToggleMessage(false);
+                  }}
+                >
+                  <CSSTransition
+                    in={toggleTrash}
+                    unmountOnExit
+                    timeout={300}
+                    classNames="delete"
+                  >
+                    <DeleteOutlined className={`${styles.trashIcon}`} />
+                  </CSSTransition>
+                </div>
+                <CSSTransition
+                  in={toggleMessage && toggleTrash}
+                  classNames="message"
+                  unmountOnExit
+                  timeout={300}
+                >
+                  <div className={`${styles.warningMessage}`}>
+                    <WarningOutlined className={`${styles.warningIcon}`} />
+                    <span className="text-[15px]">Sure to delete?</span>
+                  </div>
+                </CSSTransition>
+              </>
             );
           }}
         </Droppable>
