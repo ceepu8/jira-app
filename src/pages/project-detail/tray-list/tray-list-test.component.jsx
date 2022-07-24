@@ -68,7 +68,14 @@ export const TrayListComponentTest = ({ projectDetail }) => {
           dispatch(fetchProjectDetail(projectDetail.id));
         }
       } catch (error) {
-        console.log(error);
+        const {
+          response: { data },
+        } = error;
+        if (data?.statusCode === 403) {
+          toast.error(
+            "You are unauthorized to handle this action, please contact the project owner!"
+          );
+        }
       }
     } else {
       const data = {

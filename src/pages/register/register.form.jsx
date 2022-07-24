@@ -1,22 +1,47 @@
 import React from "react";
 
-import { Form, Input, Button, Checkbox } from "antd";
+import { Form, Input, Button } from "antd";
 import {
   UserOutlined,
   LockOutlined,
   MailOutlined,
   PhoneOutlined,
 } from "@ant-design/icons";
-import { Link } from "react-router-dom";
+
+import { Link, useNavigate } from "react-router-dom";
+import { useForm, Controller } from "react-hook-form";
+import { registerUser } from "apis/user.management.apis";
+import { toast } from "react-toastify";
 
 export const RegisterForm = () => {
-  const onFinish = (values) => {
-    console.log("Success:", values);
+  const navigate = useNavigate();
+  const {
+    control,
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      email: "",
+      passWord: "",
+      name: "",
+      phoneNumber: "",
+    },
+  });
+
+  const onSubmit = async (data) => {
+    try {
+      const response = await registerUser(data);
+      if (response.statusCode === 200) {
+        toast.success("Register account successfully!");
+        navigate("/login");
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
-  const onFinishFailed = (errorInfo) => {
-    console.log("Failed:", errorInfo);
-  };
   return (
     <div className="flex flex-col justify-center bg-gray-100">
       <p className="text-center text-2xl">Register</p>
@@ -24,56 +49,82 @@ export const RegisterForm = () => {
       <Form
         className="px-[20px]"
         layout="vertical"
-        onFinish={onFinish}
-        onFinishFailed={onFinishFailed}
+        onFinish={handleSubmit(onSubmit)}
         autoComplete="off"
       >
-        <Form.Item
-          label="Username"
-          name="username"
-          rules={[{ required: true, message: "Please input your username!" }]}
-        >
-          <Input prefix={<UserOutlined />} />
-        </Form.Item>
+        <Controller
+          name="name"
+          control={control}
+          render={({ field }) => (
+            <Form.Item
+              label="name"
+              name="name"
+              rules={[{ required: true, message: "Please input your name!" }]}
+            >
+              <Input {...field} prefix={<UserOutlined />} />
+            </Form.Item>
+          )}
+        />
 
-        <Form.Item
-          label="Email"
+        <Controller
           name="email"
-          rules={[
-            {
-              type: "email",
-              message: "The input is not valid E-mail!",
-            },
-            {
-              required: true,
-              message: "Please input your E-mail!",
-            },
-          ]}
-        >
-          <Input prefix={<MailOutlined />} />
-        </Form.Item>
+          control={control}
+          render={({ field }) => (
+            <Form.Item
+              label="Email"
+              name="email"
+              rules={[
+                {
+                  type: "email",
+                  message: "The input is not valid E-mail!",
+                },
+                {
+                  required: true,
+                  message: "Please input your E-mail!",
+                },
+              ]}
+            >
+              <Input {...field} prefix={<MailOutlined />} />
+            </Form.Item>
+          )}
+        />
 
-        <Form.Item
-          name="phone"
-          label="Phone Number"
-          rules={[
-            { required: true, message: "Please input your phone number!" },
-          ]}
-        >
-          <Input prefix={<PhoneOutlined />} />
-        </Form.Item>
+        <Controller
+          name="phoneNumber"
+          control={control}
+          render={({ field }) => (
+            <Form.Item
+              name="phone"
+              label="Phone Number"
+              rules={[
+                { required: true, message: "Please input your phone number!" },
+              ]}
+            >
+              <Input {...field} prefix={<PhoneOutlined />} />
+            </Form.Item>
+          )}
+        />
 
-        <Form.Item
-          label="Password"
-          name="password"
-          rules={[{ required: true, message: "Please input your password!" }]}
-        >
-          <Input.Password prefix={<LockOutlined />} />
-        </Form.Item>
+        <Controller
+          name="passWord"
+          control={control}
+          render={({ field }) => (
+            <Form.Item
+              label="Password"
+              name="passWord"
+              rules={[
+                { required: true, message: "Please input your password!" },
+              ]}
+            >
+              <Input.Password {...field} prefix={<LockOutlined />} />
+            </Form.Item>
+          )}
+        />
+
         <Form.Item
           name="confirm"
           label="Confirm Password"
-          dependencies={["password"]}
+          dependencies={["passWord"]}
           hasFeedback
           rules={[
             {
@@ -82,7 +133,7 @@ export const RegisterForm = () => {
             },
             ({ getFieldValue }) => ({
               validator(_, value) {
-                if (!value || getFieldValue("password") === value) {
+                if (!value || getFieldValue("passWord") === value) {
                   return Promise.resolve();
                 }
                 return Promise.reject(
