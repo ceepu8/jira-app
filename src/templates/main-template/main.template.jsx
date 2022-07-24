@@ -21,6 +21,7 @@ export const MainTemplate = (props) => {
     }
   };
   useEffect(() => {
+    navigate("/project");
     checkUser();
   }, []);
   return (
