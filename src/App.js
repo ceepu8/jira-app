@@ -1,5 +1,5 @@
 import "./App.css";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useNavigate } from "react-router-dom";
 import { LoginForm } from "./pages/log-in/log-in.form";
 import { UserRegisterLoginTemplate } from "./templates/user-register-login.template";
 import { RegisterForm } from "./pages/register/register.form";
@@ -8,6 +8,9 @@ import { HomePage } from "./pages/home/home.pages";
 import { ProjectManagementPage } from "./pages/project-management/project-management.page";
 import { CreateProjectPage } from "./pages/create-project/create-project.page";
 import { ProjectDetailPage } from "./pages/project-detail/project-detail.page";
+import { userLocalService } from "local-services/local-service";
+import { useEffect } from "react";
+import UserProfilePage from "pages/user-profile/user-profile.page";
 
 function App() {
   return (
@@ -21,17 +24,13 @@ function App() {
             path="project/project-detail/:id"
             element={<ProjectDetailPage />}
           />
+          <Route index path="profile" element={<UserProfilePage />} />
         </Route>
 
-        <Route
-          index
-          path="/login"
-          element={<UserRegisterLoginTemplate Element={LoginForm} />}
-        />
-        <Route
-          path="/register"
-          element={<UserRegisterLoginTemplate Element={RegisterForm} />}
-        />
+        <Route path="/auth" element={<UserRegisterLoginTemplate />}>
+          <Route index path="login" element={<LoginForm />} />
+          <Route index path="register" element={<RegisterForm />} />
+        </Route>
       </Routes>
     </div>
   );

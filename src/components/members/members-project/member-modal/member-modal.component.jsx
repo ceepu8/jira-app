@@ -54,11 +54,18 @@ export const MemberModalComponent = ({ projectDetail }) => {
         }
       }
     } catch (error) {
-      const { response } = error;
-      if (response.data && response.data.statusCode === 403) {
-        toast.error(
-          "You are unauthorized to handle this action, please contact the project owner"
-        );
+      switch (error.statusCode) {
+        case 403:
+          toast.error(
+            "You are unauthorized to handle this action, please contact the project owner"
+          );
+          break;
+        case 500:
+          toast.error("Internal server error");
+          break;
+
+        default:
+          break;
       }
     }
   };

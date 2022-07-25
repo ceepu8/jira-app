@@ -9,17 +9,7 @@ export const NavBar = () => {
   let { pathname } = useLocation();
 
   return (
-    <Sider
-      width={200}
-      breakpoint="lg"
-      collapsedWidth="0"
-      // onBreakpoint={(broken) => {
-      //   console.log(broken);
-      // }}
-      // onCollapse={(collapsed, type) => {
-      //   console.log(collapsed, type);
-      // }}
-    >
+    <Sider width={200} breakpoint="lg" collapsedWidth="0">
       <div className="flex items-center py-[20px] justify-center">
         <img
           className="w-[50px] h-full object-contain mr-1"

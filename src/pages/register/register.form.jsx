@@ -17,9 +17,7 @@ export const RegisterForm = () => {
   const navigate = useNavigate();
   const {
     control,
-    register,
     handleSubmit,
-    watch,
     formState: { errors },
   } = useForm({
     defaultValues: {
@@ -35,10 +33,21 @@ export const RegisterForm = () => {
       const response = await registerUser(data);
       if (response.statusCode === 200) {
         toast.success("Register account successfully!");
-        navigate("/login");
+        navigate("/auth/login");
       }
     } catch (error) {
-      console.log(error);
+      switch (error.statusCode) {
+        case 400:
+          toast.error("Email already in use");
+          break;
+
+        case 500:
+          toast.error("Internal Network Error");
+          break;
+
+        default:
+          break;
+      }
     }
   };
 
@@ -156,7 +165,7 @@ export const RegisterForm = () => {
         </Form.Item>
       </Form>
       <div className="login-nav text-center">
-        <Link to="/login">Login?</Link>
+        <Link to="/auth/login">Login?</Link>
       </div>
     </div>
   );

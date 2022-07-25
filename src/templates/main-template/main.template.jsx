@@ -11,13 +11,12 @@ import { ToastContainer } from "react-toastify";
 const { Header, Content } = Layout;
 
 export const MainTemplate = (props) => {
-  const { Element, ...restProps } = props;
-
   const navigate = useNavigate();
+
   const checkUser = () => {
     const currentUser = userLocalService.getUserInfor();
     if (!currentUser) {
-      navigate("/login");
+      navigate("/auth/login");
     }
   };
   useEffect(() => {

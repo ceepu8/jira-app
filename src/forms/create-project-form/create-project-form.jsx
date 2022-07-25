@@ -39,11 +39,13 @@ export const CreateProjectForm = ({ projectDetailId }) => {
         }, 2000);
       }
     } catch (error) {
-      const {
-        response: { data },
-      } = error;
-      if (data.statusCode === 500) {
-        toast.error(data.content);
+      switch (error.statusCode) {
+        case 500:
+          toast.error("Project name already in use!");
+          break;
+
+        default:
+          break;
       }
     }
   };
@@ -61,7 +63,7 @@ export const CreateProjectForm = ({ projectDetailId }) => {
       }
       dispatch();
     } catch (error) {
-      console.log(error);
+      toast.error("Updating project failed!");
     }
   };
 

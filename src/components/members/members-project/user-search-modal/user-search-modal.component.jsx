@@ -43,7 +43,6 @@ export const UserSearchModalComponent = ({ projectId }) => {
     if (value !== "") {
       searchRef.current = setTimeout(async () => {
         const { content } = await fetchSearchMember(value);
-        console.log(content);
         setCurrentUserList([...content]);
       }, 300);
     }
@@ -65,8 +64,7 @@ export const UserSearchModalComponent = ({ projectId }) => {
         }
       }
     } catch (error) {
-      const { response } = error;
-      if (response.data.statusCode === 403) {
+      if (error.statusCode === 403) {
         toast.error(
           "You are unauthorized to handle this action, please contact the project owner"
         );

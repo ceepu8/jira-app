@@ -28,7 +28,11 @@ export const navbarItems = [
   },
   {
     key: "project-setting",
-    label: "Project settings",
+    label: (
+      <NavLink to="/profile" className="text-white">
+        User Profile
+      </NavLink>
+    ),
     icon: SettingOutlined,
   },
 ].map((item, index) => {

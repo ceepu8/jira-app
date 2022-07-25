@@ -2,18 +2,20 @@ import { useState } from "react";
 
 import styles from "./style.module.css";
 
-import { Avatar, Button, Col, Input, Modal, Row } from "antd";
+import { Col, Input, Modal, Row } from "antd";
 
 import { BsSearch } from "react-icons/bs";
 
 import { CreateTaskForm } from "../../../forms/create-task-form/create-task.form";
 import { useSelector } from "react-redux";
 import { MemberProjectComponent } from "components/members/members-project/members.component";
+import { userLocalService } from "local-services/local-service";
 
 export const SearchBarComponent = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const { projectDetail } = useSelector((state) => state.projectSlice);
-  const { members, id } = projectDetail;
+  const currentUser = userLocalService.getUserInfor();
+  const { members, id, creator } = projectDetail;
 
   const showModal = () => {
     setIsModalVisible(true);
@@ -60,12 +62,17 @@ export const SearchBarComponent = () => {
           xxl={{ span: 15 }}
         >
           <div className={`${styles.sectionCreateTask}`}>
-            <button
-              className={`${styles.buttonCreateTask}`}
-              onClick={showModal}
-            >
-              Create Task
-            </button>
+            {currentUser?.name === creator?.name ? (
+              <button
+                className={`${styles.buttonCreateTask}`}
+                onClick={showModal}
+              >
+                Create Task
+              </button>
+            ) : (
+              ""
+            )}
+
             <Modal
               title="Create Task"
               className="w-[700px]"

@@ -1,11 +1,13 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { toast } from "react-toastify";
 import { getAllUser, loginUser } from "../../apis/user.management.apis";
 import { userLocalService } from "../../local-services/local-service";
 
 const initialState = {
-  user: {},
+  user: null,
   isLoading: false,
   userList: [],
+  error: null,
 };
 
 export const userLoginActionService = createAsyncThunk(
@@ -16,7 +18,7 @@ export const userLoginActionService = createAsyncThunk(
       userLocalService.setUserInfor(result.content);
       return result;
     } catch (error) {
-      console.log(error);
+      throw error;
     }
   }
 );
@@ -28,7 +30,7 @@ export const getAllUserActionService = createAsyncThunk(
       let result = await getAllUser();
       return result.content;
     } catch (error) {
-      console.log(error);
+      throw error;
     }
   }
 );
@@ -36,10 +38,19 @@ export const getAllUserActionService = createAsyncThunk(
 const userSlice = createSlice({
   name: "user",
   initialState,
-  reducers: {},
+  reducers: {
+    logoutUser: (state) => {
+      state.user = null;
+    },
+  },
   extraReducers: {
     [userLoginActionService.pending]: (state, action) => {
       state.isLoading = true;
+      state.error = null;
+    },
+    [userLoginActionService.rejected]: (state, { error }) => {
+      state.isLoading = false;
+      state.error = error;
     },
     [userLoginActionService.fulfilled]: (state, action) => {
       state.isLoading = false;
@@ -51,6 +62,6 @@ const userSlice = createSlice({
   },
 });
 
-export const {} = userSlice.actions;
+export const { logoutUser } = userSlice.actions;
 
 export default userSlice.reducer;

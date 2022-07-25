@@ -8,6 +8,10 @@ export const registerUser = (data) => {
   return axiosClient.post("/Users/signup", data);
 };
 
+export const updateUserInfo = (data) => {
+  return axiosClient.put("/Users/editUser", data);
+};
+
 export const getAllUser = () => {
   return axiosClient.get("/Users/getUser");
 };

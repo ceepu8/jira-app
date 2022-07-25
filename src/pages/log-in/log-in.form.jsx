@@ -6,67 +6,55 @@ import { Link } from "react-router-dom";
 import { Form, Input, Button } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 
-import { useFormik } from "formik";
-
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 
 import { useDispatch } from "react-redux";
 import { userLoginActionService } from "../../redux/slices/userSlice";
+import { useSelector } from "react-redux";
 
 export const LoginForm = () => {
   const dispatch = useDispatch();
+  const { user, error } = useSelector((state) => state.userSlice);
   const navigate = useNavigate();
-  const formik = useFormik({
-    initialValues: {
-      email: "",
-      password: "",
-    },
-    onSubmit: async (values) => {
-      try {
-        const { payload } = await dispatch(userLoginActionService(values));
-        if (payload.statusCode === 200) {
-          toast.success("Login successfully");
-          setTimeout(() => {
-            navigate("/project");
-          }, 2000);
-        }
-      } catch (error) {
-        toast.error("Your email or password was wrong, please try again!!");
-        console.log(error);
-      }
-    },
-  });
+
+  const [form] = Form.useForm();
+  const onSubmit = (values) => {
+    dispatch(userLoginActionService(values));
+  };
+  if (user) {
+    toast.success("Login successfully!");
+    navigate("/project");
+  }
+
+  if (error) {
+    toast.error(error.message);
+  }
+
   return (
     <div className="login-form flex flex-col justify-center bg-gray-100">
-      <ToastContainer />
       <p className="text-center text-2xl">Login to continue</p>
       <Form
-        onFinish={formik.handleSubmit}
+        form={form}
+        onFinish={onSubmit}
         layout="vertical"
         className="text-center px-[20px]"
       >
         <Form.Item
-          label="Username"
-          name="username"
+          label="Email"
+          name="email"
           rules={[
             {
               required: true,
-              message: "Please input your username!",
+              message: "Please input your email!",
             },
           ]}
         >
-          <Input
-            id="email"
-            name="email"
-            prefix={<UserOutlined />}
-            onChange={formik.handleChange}
-            value={formik.values.email}
-          />
+          <Input prefix={<UserOutlined />} />
         </Form.Item>
 
         <Form.Item
           label="Password"
-          name="password"
+          name="passWord"
           rules={[
             {
               required: true,
@@ -74,13 +62,7 @@ export const LoginForm = () => {
             },
           ]}
         >
-          <Input.Password
-            id="password"
-            name="password"
-            prefix={<LockOutlined />}
-            onChange={formik.handleChange}
-            value={formik.values.password}
-          />
+          <Input.Password prefix={<LockOutlined />} />
         </Form.Item>
 
         <Form.Item>
@@ -93,7 +75,7 @@ export const LoginForm = () => {
         </Form.Item>
       </Form>
       <div className="register text-center">
-        <Link to="/register">Register?</Link>
+        <Link to="/auth/register">Register?</Link>
       </div>
     </div>
   );

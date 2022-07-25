@@ -5,6 +5,8 @@ import "./create-task-form.styles.css";
 import { Form, Select, Tag, Input, Col, Row, Slider, Button } from "antd";
 import { Editor } from "@tinymce/tinymce-react";
 
+import { toast } from "react-toastify";
+
 import {
   AiFillCheckSquare,
   AiFillWarning,
@@ -14,7 +16,6 @@ import {
 import { priorityList } from "./priority.settings";
 import { createTask } from "../../apis/task.management.apis";
 
-import useNoti from "../../customHooks/useNoti";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchProjectDetail } from "../../redux/slices/projectSlice";
 
@@ -51,7 +52,6 @@ export const CreateTaskForm = () => {
   };
 
   const tagRender = (props) => {
-    console.log(props);
     const { label, closable, onClose } = props;
 
     const onPreventMouseDown = (event) => {
@@ -73,15 +73,22 @@ export const CreateTaskForm = () => {
     );
   };
 
-  const { checkDataStatus } = useNoti("Create Task");
-
   const handleSubmit = async () => {
     try {
-      const data = await createTask(task);
-      checkDataStatus(data);
-      dispatch(fetchProjectDetail(id));
+      const response = await createTask(task);
+      if (response.statusCode === 200) {
+        dispatch(fetchProjectDetail(id));
+        toast.success("Create task successfully!");
+      }
     } catch (error) {
-      console.log(error);
+      switch (error.statusCode) {
+        case 500:
+          toast.error("Task name already in use!");
+          break;
+
+        default:
+          break;
+      }
     }
   };
   return (

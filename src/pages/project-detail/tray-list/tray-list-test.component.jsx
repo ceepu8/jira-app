@@ -17,12 +17,8 @@ import { TaskCardComponent } from "../task-card/task-card.component";
 
 import { deleteTask, updateTaskStatus } from "apis/task.management.apis";
 
-import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
-import {
-  fetchProjectDetail,
-  setProjectDetail,
-} from "../../../redux/slices/projectSlice";
+import { setProjectDetail } from "../../../redux/slices/projectSlice";
 import { getDetailProject } from "../../../apis/project.management.apis";
 import { toast } from "react-toastify";
 
@@ -68,10 +64,7 @@ export const TrayListComponentTest = ({ projectDetail }) => {
           dispatch(fetchProjectDetail(projectDetail.id));
         }
       } catch (error) {
-        const {
-          response: { data },
-        } = error;
-        if (data?.statusCode === 403) {
+        if (error.statusCode === 403) {
           toast.error(
             "You are unauthorized to handle this action, please contact the project owner!"
           );
@@ -85,6 +78,7 @@ export const TrayListComponentTest = ({ projectDetail }) => {
       try {
         const { statusCode } = await updateTaskStatus(data);
         if (statusCode === 200) {
+          toast.success("Update task status successfully!");
           dispatch(fetchProjectDetail(projectDetail.id));
         }
       } catch (error) {
