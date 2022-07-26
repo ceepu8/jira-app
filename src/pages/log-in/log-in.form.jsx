@@ -9,7 +9,10 @@ import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import { toast } from "react-toastify";
 
 import { useDispatch } from "react-redux";
-import { userLoginActionService } from "../../redux/slices/userSlice";
+import {
+  setErrorToNull,
+  userLoginActionService,
+} from "../../redux/slices/userSlice";
 import { useSelector } from "react-redux";
 
 export const LoginForm = () => {
@@ -28,6 +31,7 @@ export const LoginForm = () => {
 
   if (error) {
     toast.error(error.message);
+    dispatch(setErrorToNull());
   }
 
   return (
@@ -38,6 +42,12 @@ export const LoginForm = () => {
         onFinish={onSubmit}
         layout="vertical"
         className="text-center px-[20px]"
+        fields={[
+          {
+            name: "email",
+            value: "@gmail.com",
+          },
+        ]}
       >
         <Form.Item
           label="Email"
@@ -46,6 +56,10 @@ export const LoginForm = () => {
             {
               required: true,
               message: "Please input your email!",
+            },
+            {
+              type: "email",
+              message: "The input is not valid E-mail!",
             },
           ]}
         >

@@ -21,9 +21,7 @@ export const NavBar = () => {
       <Menu
         theme="dark"
         mode="inline"
-        defaultSelectedKeys={
-          pathname === "/project" || pathname === "/" ? ["0"] : ["1"]
-        }
+        defaultSelectedKeys={pathname === "/project" ? ["0"] : ["1"]}
         style={{
           borderRight: 0,
           color: "white",

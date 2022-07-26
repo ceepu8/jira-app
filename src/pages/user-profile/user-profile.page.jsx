@@ -15,6 +15,25 @@ const UserProfilePage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [isUpdate, setUpdate] = useState(false);
+  const [isCancel, setCancel] = useState(false);
+  const [fields, setFields] = useState([
+    {
+      name: ["name"],
+      value: user.name,
+    },
+    {
+      name: ["phoneNumber"],
+      value: user.phoneNumber,
+    },
+    {
+      name: ["email"],
+      value: user.email,
+    },
+    {
+      name: ["passWord"],
+      value: "",
+    },
+  ]);
 
   const onSubmit = async (values) => {
     const data = { ...values, id: user.id };
@@ -22,6 +41,8 @@ const UserProfilePage = () => {
       const response = await updateUserInfo(data);
       if (response.statusCode === 200) {
         toast.success("Update user info successfully!!");
+        setUpdate(false);
+        setCancel(false);
       }
     } catch (error) {
       console.log(error);
@@ -46,6 +67,7 @@ const UserProfilePage = () => {
   };
 
   const [form] = Form.useForm();
+  console.log("renders");
   return (
     <div>
       <h1 className="text-2xl">User Profile</h1>
@@ -58,38 +80,26 @@ const UserProfilePage = () => {
           style={formStyle}
           layout="vertical"
           onFinish={onSubmit}
-          onFieldsChange={(event) => {
+          onFieldsChange={(event, allFields) => {
+            setFields(allFields);
             if (event[0].touched) {
               setUpdate(true);
+              setCancel(true);
+            }
+            if (event[0].value === "") {
+              setUpdate(false);
             }
           }}
           autoComplete="off"
           form={form}
-          fields={[
-            {
-              name: ["name"],
-              value: user.name,
-            },
-            {
-              name: ["phoneNumber"],
-              value: user.phoneNumber,
-            },
-            {
-              name: ["email"],
-              value: user.email,
-            },
-            {
-              name: ["passWord"],
-              value: "",
-            },
-          ]}
+          fields={fields}
         >
           <Form.Item
             name="name"
             label="Name"
             rules={[{ required: true, message: "Please input your name!" }]}
           >
-            <Input value={user.name} />
+            <Input />
           </Form.Item>
 
           <Form.Item
@@ -120,33 +130,44 @@ const UserProfilePage = () => {
           >
             <Input placeholder="large size" />
           </Form.Item>
-          <Form.Item
-            name="passWord"
-            label="Password"
-            rules={[
-              {
-                required: true,
-                message: "Please input your password!",
-              },
-            ]}
-          >
+          <Form.Item name="passWord" label="Password">
             <Input.Password />
           </Form.Item>
           <div className="text-right">
             {isUpdate && (
-              <>
-                <Button className="mr-2" htmlType="submit" type="primary">
-                  Update Info
-                </Button>
-                <Button
-                  onClick={() => setUpdate(false)}
-                  className="mr-2"
-                  htmlType="submit"
-                  type="primary"
-                >
-                  Cancel
-                </Button>
-              </>
+              <Button className="mr-2" htmlType="submit" type="primary">
+                Update Info
+              </Button>
+            )}
+            {isCancel && (
+              <Button
+                onClick={() => {
+                  setUpdate(false);
+                  setCancel(false);
+                  setFields([
+                    {
+                      name: ["name"],
+                      value: user.name,
+                    },
+                    {
+                      name: ["phoneNumber"],
+                      value: user.phoneNumber,
+                    },
+                    {
+                      name: ["email"],
+                      value: user.email,
+                    },
+                    {
+                      name: ["passWord"],
+                      value: "",
+                    },
+                  ]);
+                }}
+                className="mr-2"
+                type="primary"
+              >
+                Cancel
+              </Button>
             )}
 
             <Button
