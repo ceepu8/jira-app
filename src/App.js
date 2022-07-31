@@ -11,6 +11,7 @@ import { ProjectDetailPage } from "./pages/project-detail/project-detail.page";
 import { userLocalService } from "local-services/local-service";
 import { useEffect } from "react";
 import UserProfilePage from "pages/user-profile/user-profile.page";
+import NotFoundPage from "pages/not-found/not-found.pages";
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
           <Route index path="login" element={<LoginForm />} />
           <Route index path="register" element={<RegisterForm />} />
         </Route>
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </div>
   );
