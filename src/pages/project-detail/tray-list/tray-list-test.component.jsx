@@ -64,12 +64,12 @@ export const TrayListComponentTest = ({ listTask }) => {
         lstTaskDeTail: [...sourceTasks],
       };
 
-      setCurrentListTask([...newListTask]);
       try {
         const response = await deleteTask(draggableId);
         if (response.statusCode === 200) {
           setToggleMessage(false);
           toast.success("Delete task successfully");
+          setCurrentListTask([...newListTask]);
         }
       } catch (error) {
         if (error.statusCode === 403) {
