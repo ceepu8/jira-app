@@ -21,25 +21,19 @@ import { useDispatch } from "react-redux";
 import { setProjectDetail } from "../../../redux/slices/projectSlice";
 import { getDetailProject } from "../../../apis/project.management.apis";
 import { toast } from "react-toastify";
+import { useSelector } from "react-redux";
 
-export const TrayListComponentTest = ({ projectDetail }) => {
+export const TrayListComponentTest = ({ listTask }) => {
   const dispatch = useDispatch();
-  const [status, setStatus] = useState([]);
   const [toggleTrash, setIsToggleTrash] = useState(false);
   const [toggleMessage, setToggleMessage] = useState(false);
 
-  const fetchStatus = async () => {
-    try {
-      const response = await getStatus();
-      setStatus(response.content);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  const [currentListTask, setCurrentListTask] = useState([]);
 
   useEffect(() => {
-    fetchStatus();
-  }, []);
+    console.log(123);
+    setCurrentListTask(listTask);
+  }, [listTask]);
 
   const fetchProjectDetail = async (id) => {
     try {
@@ -51,17 +45,31 @@ export const TrayListComponentTest = ({ projectDetail }) => {
   };
 
   const onDragEnd = async (result) => {
-    const {
-      destination: { droppableId },
-      draggableId,
-    } = result;
-    if (droppableId === "deleteTask" && toggleMessage) {
+    const { source, destination, draggableId } = result;
+
+    if (destination.droppableId === "deleteTask" && toggleMessage) {
+      const sourceColIndex = currentListTask.findIndex(
+        (e) => e.statusId === source.droppableId
+      );
+      const sourceCol = currentListTask[sourceColIndex];
+      const sourceSectionId = sourceCol.statusId;
+      let sourceTasks = [...sourceCol.lstTaskDeTail];
+      console.log(draggableId);
+      sourceTasks = sourceTasks.filter(
+        (task) => task.taskId !== Number(draggableId)
+      );
+      let newListTask = [...currentListTask];
+      newListTask[sourceColIndex] = {
+        ...newListTask[sourceColIndex],
+        lstTaskDeTail: [...sourceTasks],
+      };
+
+      setCurrentListTask([...newListTask]);
       try {
         const response = await deleteTask(draggableId);
         if (response.statusCode === 200) {
           setToggleMessage(false);
           toast.success("Delete task successfully");
-          dispatch(fetchProjectDetail(projectDetail.id));
         }
       } catch (error) {
         if (error.statusCode === 403) {
@@ -71,15 +79,56 @@ export const TrayListComponentTest = ({ projectDetail }) => {
         }
       }
     } else {
+      if (source.droppableId === destination.droppableId) {
+        return;
+      }
+
+      const sourceColIndex = currentListTask.findIndex(
+        (e) => e.statusId === source.droppableId
+      );
+      const destinationColIndex = currentListTask.findIndex(
+        (e) => e.statusId === destination.droppableId
+      );
+
+      const sourceCol = currentListTask[sourceColIndex];
+      const destinationCol = currentListTask[destinationColIndex];
+
+      const sourceSectionId = sourceCol.statusId;
+      const destinationSectionId = destinationCol.statusId;
+
+      let sourceTasks = [...sourceCol.lstTaskDeTail];
+      let destinationTasks = [...destinationCol.lstTaskDeTail];
+
+      if (source.droppableId !== destination.droppableId) {
+        const removeTask = sourceTasks.find(
+          (task) => task.taskId !== draggableId
+        );
+        sourceTasks = sourceTasks.filter(
+          (task) => task.taskId !== removeTask.taskId
+        );
+        destinationTasks.splice(destination.index, 0, removeTask);
+
+        let newListTask = [...currentListTask];
+        newListTask[sourceColIndex] = {
+          ...newListTask[sourceColIndex],
+          lstTaskDeTail: [...sourceTasks],
+        };
+        newListTask[destinationColIndex] = {
+          ...newListTask[destinationColIndex],
+          lstTaskDeTail: [...destinationTasks],
+        };
+        setCurrentListTask([...newListTask]);
+      }
+
       const data = {
         taskId: draggableId,
-        statusId: Number(droppableId),
+        statusId: Number(destination.droppableId),
       };
+
       try {
         const { statusCode } = await updateTaskStatus(data);
         if (statusCode === 200) {
           toast.success("Update task status successfully!");
-          dispatch(fetchProjectDetail(projectDetail.id));
         }
       } catch (error) {
         console.log(error);
@@ -87,24 +136,17 @@ export const TrayListComponentTest = ({ projectDetail }) => {
     }
     setIsToggleTrash(false);
   };
+  console.log("render");
   const renderStatusTrack = () => {
-    return status.map((each) => {
-      let taskList = [];
-      if (projectDetail.lstTask && projectDetail.lstTask.length > 0) {
-        projectDetail.lstTask.forEach((task) => {
-          if (task.statusName === each.statusName) {
-            taskList = [...task.lstTaskDeTail];
-          }
-        });
-      }
-
+    console.log(currentListTask);
+    return currentListTask.map((taskGroup, index) => {
       return (
         <Col
           sm={{ span: 24 }}
           md={{ span: 12 }}
           lg={{ span: 12 }}
           xl={{ span: 6 }}
-          key={each.statusId}
+          key={taskGroup.statusId}
         >
           <h1
             style={{
@@ -114,14 +156,13 @@ export const TrayListComponentTest = ({ projectDetail }) => {
               color: "#ffffff",
             }}
           >
-            {each.statusName}
+            {taskGroup.statusName}
           </h1>
-          <Droppable droppableId={each.statusId}>
-            {(provided, snapshot) => (
+          <Droppable droppableId={taskGroup.statusId.toString()}>
+            {(provided) => (
               <Card
                 ref={provided.innerRef}
                 {...provided.droppableProps}
-                // title={each.statusName}
                 style={{
                   backgroundColor: "#f2f5f7",
                   border: "none",
@@ -129,25 +170,29 @@ export const TrayListComponentTest = ({ projectDetail }) => {
                   paddingBottom: "20px",
                 }}
               >
-                {taskList.map((task, index) => {
-                  return (
-                    <Draggable
-                      key={task.taskId}
-                      draggableId={task.taskId.toString()}
-                      index={index}
-                    >
-                      {(provided, snapshot) => (
-                        <div
-                          ref={provided.innerRef}
-                          {...provided.draggableProps}
-                          {...provided.dragHandleProps}
-                        >
-                          <TaskCardComponent task={task} />
-                        </div>
-                      )}
-                    </Draggable>
-                  );
+                {taskGroup.lstTaskDeTail.map((task) => {
+                  if (task) {
+                    return (
+                      <Draggable
+                        key={task.taskId}
+                        draggableId={task.taskId.toString()}
+                        index={index}
+                      >
+                        {(provided) => (
+                          <div
+                            key={task.taskId}
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
+                            {...provided.dragHandleProps}
+                          >
+                            <TaskCardComponent task={task} />
+                          </div>
+                        )}
+                      </Draggable>
+                    );
+                  }
                 })}
+
                 {provided.placeholder}
               </Card>
             )}

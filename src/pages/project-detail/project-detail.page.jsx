@@ -32,7 +32,7 @@ export const ProjectDetailPage = () => {
       <BreadcrumbComponent projectName={projectDetail.projectName} />
       <SearchBarComponent />
       {/* <TrayListComponent projectDetail={projectDetail} /> */}
-      <TrayListComponentTest projectDetail={projectDetail} />
+      <TrayListComponentTest listTask={projectDetail?.lstTask} />
     </div>
   );
 };

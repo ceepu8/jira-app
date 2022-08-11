@@ -1,8 +1,12 @@
 import React, { useEffect, useState } from "react";
 
+import styles from "./styles.module.css";
 import "./tray-list.styles.css";
 
 import { Card, Col, Row } from "antd";
+import { DeleteOutlined, WarningOutlined } from "@ant-design/icons";
+
+import { CSSTransition } from "react-transition-group";
 
 import { getStatus } from "../../../apis/status.management.api";
 
@@ -11,10 +15,18 @@ import { TrayItemComponent } from "../tray-item/tray-item.component";
 import { Draggable, Droppable, DragDropContext } from "react-beautiful-dnd";
 import { TaskCardComponent } from "../task-card/task-card.component";
 
+import { deleteTask, updateTaskStatus } from "apis/task.management.apis";
+
+import { useDispatch } from "react-redux";
+import { setProjectDetail } from "../../../redux/slices/projectSlice";
+import { getDetailProject } from "../../../apis/project.management.apis";
+import { toast } from "react-toastify";
+
 export const TrayListComponent = ({ projectDetail }) => {
-  console.log(projectDetail);
+  const dispatch = useDispatch();
   const [status, setStatus] = useState([]);
-  const [taskList, setTaskList] = useState([]);
+  const [toggleTrash, setIsToggleTrash] = useState(false);
+  const [toggleMessage, setToggleMessage] = useState(false);
 
   const fetchStatus = async () => {
     try {
@@ -29,14 +41,52 @@ export const TrayListComponent = ({ projectDetail }) => {
     fetchStatus();
   }, []);
 
-  const reorder = (list, startIndex, endIndex) => {
-    const result = Array.from(list);
-    const [removed] = result.splice(startIndex, 1);
-    result.splice(endIndex, 0, removed);
-
-    return result;
+  const fetchProjectDetail = async (id) => {
+    try {
+      const response = await getDetailProject(id);
+      dispatch(setProjectDetail(response.content));
+    } catch (error) {
+      console.log(error);
+    }
   };
-  const onDragEnd = (result) => {};
+
+  const onDragEnd = async (result) => {
+    const {
+      destination: { droppableId },
+      draggableId,
+    } = result;
+    if (droppableId === "deleteTask" && toggleMessage) {
+      try {
+        const response = await deleteTask(draggableId);
+        if (response.statusCode === 200) {
+          setToggleMessage(false);
+          toast.success("Delete task successfully");
+          dispatch(fetchProjectDetail(projectDetail.id));
+        }
+      } catch (error) {
+        if (error.statusCode === 403) {
+          toast.error(
+            "You are unauthorized to handle this action, please contact the project owner!"
+          );
+        }
+      }
+    } else {
+      const data = {
+        taskId: draggableId,
+        statusId: Number(droppableId),
+      };
+      try {
+        const { statusCode } = await updateTaskStatus(data);
+        if (statusCode === 200) {
+          toast.success("Update task status successfully!");
+          dispatch(fetchProjectDetail(projectDetail.id));
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    setIsToggleTrash(false);
+  };
   const renderStatusTrack = () => {
     return status.map((each) => {
       let taskList = [];
@@ -50,11 +100,23 @@ export const TrayListComponent = ({ projectDetail }) => {
 
       return (
         <Col
-          md={{ span: 12, offset: 1 }}
-          lg={{ span: 6, offset: 1 }}
+          sm={{ span: 24 }}
+          md={{ span: 12 }}
+          lg={{ span: 12 }}
+          xl={{ span: 6 }}
           key={each.statusId}
         >
-          <Droppable droppableId="droppable">
+          <h1
+            style={{
+              backgroundColor: "#165fc7",
+              padding: "10px",
+              borderRadius: "10px 10px 0 0",
+              color: "#ffffff",
+            }}
+          >
+            {each.statusName}
+          </h1>
+          <Droppable droppableId={each.statusId}>
             {(provided, snapshot) => (
               <Card
                 ref={provided.innerRef}
@@ -63,7 +125,8 @@ export const TrayListComponent = ({ projectDetail }) => {
                 style={{
                   backgroundColor: "#f2f5f7",
                   border: "none",
-                  height: "500px",
+                  minHeight: "550px",
+                  paddingBottom: "20px",
                 }}
               >
                 {taskList.map((task, index) => {
@@ -86,7 +149,6 @@ export const TrayListComponent = ({ projectDetail }) => {
                   );
                 })}
                 {provided.placeholder}
-                {/* <TrayItemComponent status={each} taskList={taskList} /> */}
               </Card>
             )}
           </Droppable>
@@ -97,11 +159,52 @@ export const TrayListComponent = ({ projectDetail }) => {
 
   return (
     <div className="site-card-wrapper">
-      <Row gutter={8}>
-        <DragDropContext onDragEnd={onDragEnd}>
-          {renderStatusTrack()}
-        </DragDropContext>
-      </Row>
+      <DragDropContext
+        onDragEnd={onDragEnd}
+        onBeforeDragStart={() => setIsToggleTrash(true)}
+      >
+        <Row gutter={8}>{renderStatusTrack()}</Row>
+
+        <Droppable droppableId="deleteTask">
+          {(provided, snapshot) => {
+            return (
+              <>
+                <div
+                  className={`${styles.positionTrash}`}
+                  ref={provided.innerRef}
+                  {...provided.droppableProps}
+                  onMouseOver={() => {
+                    setToggleMessage(true);
+                  }}
+                  onMouseLeave={() => {
+                    setToggleMessage(false);
+                  }}
+                >
+                  <CSSTransition
+                    in={toggleTrash}
+                    unmountOnExit
+                    timeout={300}
+                    classNames="delete"
+                  >
+                    <DeleteOutlined className={`${styles.trashIcon}`} />
+                  </CSSTransition>
+                </div>
+                <CSSTransition
+                  in={toggleMessage && toggleTrash}
+                  classNames="message"
+                  unmountOnExit
+                  timeout={300}
+                >
+                  <div className={`${styles.warningMessage}`}>
+                    <WarningOutlined className={`${styles.warningIcon}`} />
+                    <span className="text-[15px]">Sure to delete?</span>
+                  </div>
+                </CSSTransition>
+              </>
+            );
+          }}
+        </Droppable>
+      </DragDropContext>
     </div>
   );
 };

@@ -4,7 +4,6 @@ import { getAllCommentAPI } from "../../../../redux/slices/commentSlice";
 import { SingleCommentComponent } from "../../single-comment/single-comment.component";
 
 export const TaskCommentListComponent = ({ taskId }) => {
-  console.log(taskId);
   const dispatch = useDispatch();
   const { commentList } = useSelector((state) => state.commentSlice);
   useEffect(() => {
