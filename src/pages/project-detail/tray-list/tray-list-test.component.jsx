@@ -80,6 +80,7 @@ export const TrayListComponentTest = ({ listTask }) => {
       }
     } else {
       if (source.droppableId === destination.droppableId) {
+        setIsToggleTrash(false);
         return;
       }
 
