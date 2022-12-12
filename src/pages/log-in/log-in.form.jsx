@@ -91,6 +91,11 @@ export const LoginForm = () => {
       <div className="register text-center">
         <Link to="/auth/register">Register?</Link>
       </div>
+
+      <div className="text-center mt-3">
+        <p className="mb-0">email: uyenuyen111</p>
+        <p>password: 123123</p>
+      </div>
     </div>
   );
 };
